@@ -404,9 +404,24 @@ local function select_terminal(opts)
   end)
 end
 
+function M.new_select_terminal(count)
+  local term = terms.get(count, true)
+  if not term then return end
+  if term:is_open() then
+    term:focus()
+  else
+    term:open()
+  end
+end
+
 local function setup_commands()
   local command = api.nvim_create_user_command
-  command("TermSelect", select_terminal, { bang = true })
+  -- command("TermSelect", select_terminal, { bang = true })
+  command(
+    "TermSelect",
+    function(opts) M.new_select_terminal(opts.count) end,
+    { count = true, complete = nil, nargs = 0 }
+  )
   -- Count is 0 by default
   command(
     "TermExec",
