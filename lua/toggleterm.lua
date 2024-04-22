@@ -250,7 +250,7 @@ function M.send_lines_to_terminal(selection_type, trim_spaces, cmd_data)
 
   -- Jump back with the cursor where we were at the beginning of the selection
   api.nvim_set_current_win(current_window)
-  api.nvim_win_set_cursor(current_window, { start_line, start_col })
+  api.nvim_win_set_cursor(current_window, { start_line, start_col - 1 })
 end
 
 function M.toggle_command(args, count)
@@ -394,7 +394,8 @@ local function select_terminal(opts)
   vim.ui.select(terminals, {
     prompt = "Please select a terminal to open (or focus): ",
     format_item = function(term) return term.id .. ": " .. term:_display_name() end,
-  }, function(term)
+  }, function(_, idx)
+    local term = terminals[idx]
     if not term then return end
     if term:is_open() then
       term:focus()
